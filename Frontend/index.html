@@ -992,7 +992,7 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-                const response = await fetch('http://localhost:3000/api/claims', {
+                const response = await fetch('http://54.166.206.245:3007/api/claims', {
                     method: 'POST',
                     body: formData,
                     signal: controller.signal,
@@ -1058,14 +1058,14 @@
                 
                 try {
                     const empId = document.getElementById('empId').value.trim();
-                    let claimsResponse = await fetch(`http://localhost:3000/api/claims`, {
+                    let claimsResponse = await fetch(`http://54.166.206.245:3007/api/claims`, {
                         headers: { 'Accept': 'application/json' },
                         mode: 'cors'
                     });
                     let claims = await claimsResponse.json();
                     if (!claimsResponse.ok || !Array.isArray(claims)) {
                         console.warn('Primary fetch failed, trying with employee_id:', empId);
-                        claimsResponse = await fetch(`http://localhost:3000/api/claims?employee_id=${empId}`, {
+                        claimsResponse = await fetch(`http://54.166.206.245:3007/api/claims?employee_id=${empId}`, {
                             headers: { 'Accept': 'application/json' },
                             mode: 'cors'
                         });
@@ -1158,7 +1158,7 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
                 
-                let response = await fetch(`http://localhost:3000/api/claims`, {
+                let response = await fetch(`http://54.166.206.245:3007/api/claims`, {
                     signal: controller.signal,
                     headers: {
                         'Accept': 'application/json'
@@ -1174,7 +1174,7 @@
                     const empId = sessionStorage.getItem('employeeId');
                     if (empId) {
                         console.log(`Retrying with employee_id: ${empId}`);
-                        response = await fetch(`http://localhost:3000/api/claims?employee_id=${empId}`, {
+                        response = await fetch(`http://54.166.206.245:3007/api/claims?employee_id=${empId}`, {
                             signal: controller.signal,
                             headers: {
                                 'Accept': 'application/json'
@@ -1229,12 +1229,12 @@
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
                 
                 const [claimResponse, documentsResponse] = await Promise.all([
-                    fetch(`http://localhost:3000/api/claims?claim_id=${claimId}`, { 
+                    fetch(`http://54.166.206.245:3007/api/claims?claim_id=${claimId}`, { 
                         signal: controller.signal, 
                         headers: { 'Accept': 'application/json' }, 
                         mode: 'cors' 
                     }),
-                    fetch(`http://localhost:3000/api/claims/${claimId}/documents`, { 
+                    fetch(`http://54.166.206.245:3007/api/claims/${claimId}/documents`, { 
                         signal: controller.signal, 
                         headers: { 'Accept': 'application/json' }, 
                         mode: 'cors' 
