@@ -5,7 +5,6 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-
 const app = express();
 app.use(cors());
 
@@ -34,7 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'Uploads');
 if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(UploadsDir);
+    fs.mkdirSync(uploadsDir);
 }
 
 // PostgreSQL connection
@@ -74,10 +73,9 @@ const upload = multer({
 async function initializeDatabase() {
     try {
         console.log('Initializing database...');
-        await pool.query('DROP TABLE IF EXISTS documents CASCADE');
-        await pool.query('DROP TABLE IF EXISTS claims CASCADE');
+       
         await pool.query(`
-            CREATE TABLE claims (
+            CREATE TABLE if not exists claims (
                 claim_id VARCHAR(20) PRIMARY KEY,
                 employee_name VARCHAR(100),
                 employee_email VARCHAR(100),
@@ -93,7 +91,7 @@ async function initializeDatabase() {
             )
         `);
         await pool.query(`
-            CREATE TABLE documents (
+            CREATE TABLE if not exists documents (
                 id SERIAL PRIMARY KEY,
                 claim_id VARCHAR(20) REFERENCES claims(claim_id) ON DELETE CASCADE,
                 file_name VARCHAR(255),
@@ -313,8 +311,9 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
+const IP_ADDRESS = '0.0.0.0'; 
 const PORT = 3000;
-app.listen(PORT, async () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(PORT, IP_ADDRESS, async () => {
+    console.log(`Server running on ${IP_ADDRESS}:${PORT}`);
     await initializeDatabase();
 });
