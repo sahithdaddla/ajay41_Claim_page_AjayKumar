@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: claim_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: new_employee_db
+    ports:
+      - "5437:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  backend:
+    build: ./Backend
+    container_name: claim_backend
+    ports:
+      - "3007:3007"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    volumes:
+      - ./Backend/Uploads:/app/Uploads
+
+  frontend:
+    build: ./Frontend
+    container_name: claim_frontend
+    ports:
+      - "8020:80"
+    networks:
+      - app-network
+
+  hr_page:
+    build: ./HR_Page
+    container_name: claim_hrpage
+    ports:
+      - "8021:80"
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
+

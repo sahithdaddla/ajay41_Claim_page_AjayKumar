@@ -311,9 +311,16 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const IP_ADDRESS = '54.166.206.245'; 
+//app.listen(3007, '0.0.0.0', () => { 
+//const PORT = 3007;
+//app.listen(PORT, IP_ADDRESS, async () => {
+//    console.log(`Server running on ${IP_ADDRESS}:${PORT}`);
+//    await initializeDatabase();
+
 const PORT = 3007;
-app.listen(PORT, IP_ADDRESS, async () => {
-    console.log(`Server running on ${IP_ADDRESS}:${PORT}`);
-    await initializeDatabase();
+const HOST = '0.0.0.0'; // Listen on all interfaces
+
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on http://${HOST}:${PORT}`);
 });
+
