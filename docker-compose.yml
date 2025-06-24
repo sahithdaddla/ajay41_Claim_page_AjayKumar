@@ -9,12 +9,17 @@ services:
       POSTGRES_PASSWORD: admin123
       POSTGRES_DB: new_employee_db
     ports:
-      - "5407:5432"
+      - "5408:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   backend:
     build: ./Backend
@@ -22,11 +27,13 @@ services:
     ports:
       - "3407:3407"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - app-network
     volumes:
       - ./Backend/Uploads:/app/Uploads
+    command: ["node", "server.js"]
 
   frontend:
     build: ./Frontend

@@ -1,0 +1,300 @@
+const express = require('express');
+const { Pool } = require('pg');
+const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const app = express();
+app.use(cors());
+
+// Configure CORS
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Max-Age', '86400');
+    next();
+});
+
+// Log OPTIONS requests
+app.options('*', (req, res) => {
+    res.status(204).send();
+});
+
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'Uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// PostgreSQL pool
+const pool = new Pool({
+    user: 'postgres',
+    host: 'postgres',
+    database: 'new_employee_db',
+    password: 'admin123',
+    port: 5432
+});
+
+// PostgreSQL readiness checker
+async function waitForPostgres(retries = 10, delay = 3000) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            await pool.query('SELECT 1');
+            console.log('✅ PostgreSQL is ready');
+            return;
+        } catch (err) {
+            console.log(`⏳ Waiting for PostgreSQL... (${i + 1}/${retries})`);
+            await new Promise(res => setTimeout(res, delay));
+        }
+    }
+    console.error('❌ PostgreSQL is not responding. Exiting.');
+    process.exit(1);
+}
+
+// Multer config
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadsDir),
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+        if (allowedTypes.includes(file.mimetype)) cb(null, true);
+        else cb(new Error('Only PDF, JPG, and PNG files are allowed'));
+    },
+    limits: { fileSize: 5 * 1024 * 1024 }
+});
+
+// DB Initialization
+async function initializeDatabase() {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS claims (
+                claim_id VARCHAR(20) PRIMARY KEY,
+                employee_name VARCHAR(100),
+                employee_email VARCHAR(100),
+                employee_id VARCHAR(10),
+                department VARCHAR(50),
+                claim_date DATE,
+                amount DECIMAL(10,2),
+                description TEXT,
+                type VARCHAR(50),
+                status VARCHAR(20),
+                created_at TIMESTAMP,
+                updated_at TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS documents (
+                id SERIAL PRIMARY KEY,
+                claim_id VARCHAR(20) REFERENCES claims(claim_id) ON DELETE CASCADE,
+                file_name VARCHAR(255),
+                file_path VARCHAR(255),
+                uploaded_at TIMESTAMP
+            )
+        `);
+        console.log('✅ Database initialized');
+    } catch (error) {
+        console.error('❌ Error initializing database:', error.message);
+        process.exit(1);
+    }
+}
+
+// POST /api/claims
+app.post('/api/claims', upload.array('documents', 5), async (req, res) => {
+    try {
+        const { empName, empEmail, empId, department, claimDate, amount, description, type } = req.body;
+
+        if (!empName || !empEmail || !empId || !department || !claimDate || !amount || !description || !type) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        if (!/^ATS0[1-9]\d{2}$/.test(empId)) {
+            return res.status(400).json({ error: 'Employee ID must be ATS0 followed by 3 digits (e.g., ATS0123)' });
+        }
+
+        if (!/^[a-zA-Z0-9._%+-]+@(gmail|outlook)\.com$/.test(empEmail)) {
+            return res.status(400).json({ error: 'Email must be @gmail.com or @outlook.com' });
+        }
+
+        const amountValue = parseFloat(amount);
+        if (isNaN(amountValue) || amountValue <= 0 || amountValue > 50000) {
+            return res.status(400).json({ error: 'Amount must be between ₹0.01 and ₹50,000' });
+        }
+
+        const claimDateObj = new Date(claimDate);
+        const today = new Date();
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(today.getMonth() - 3);
+        if (claimDateObj > today || claimDateObj < threeMonthsAgo) {
+            return res.status(400).json({ error: 'Claim date must be within the last 3 months and not in the future' });
+        }
+
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'At least one document is required' });
+        }
+
+        const claimId = `CLM-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        const query = `
+            INSERT INTO claims (claim_id, employee_name, employee_email, employee_id, department, claim_date, amount, description, type, status, created_at, updated_at)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING claim_id
+        `;
+        const values = [claimId, empName, empEmail, empId, department, claimDate, amountValue, description, type, 'pending', new Date(), new Date()];
+        await pool.query(query, values);
+
+        for (const file of req.files) {
+            if (!fs.existsSync(file.path)) continue;
+
+            await pool.query(
+                `INSERT INTO documents (claim_id, file_name, file_path, uploaded_at) VALUES ($1, $2, $3, $4)`,
+                [claimId, file.originalname, file.path, new Date()]
+            );
+        }
+
+        res.status(201).json({
+            message: 'Claim submitted successfully',
+            claimId,
+            documents: req.files.map(f => ({
+                originalName: f.originalname,
+                storedPath: f.path
+            }))
+        });
+    } catch (error) {
+        console.error('POST /api/claims error:', error.message);
+        if (req.files) {
+            req.files.forEach(file => {
+                try {
+                    if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+                } catch (_) {}
+            });
+        }
+        res.status(500).json({ error: 'Server error while submitting claim' });
+    }
+});
+
+// GET /api/claims
+app.get('/api/claims', async (req, res) => {
+    try {
+        const { employee_id, claim_id, status } = req.query;
+        let query = 'SELECT * FROM claims WHERE 1=1';
+        const values = [];
+
+        if (employee_id) {
+            values.push(employee_id);
+            query += ` AND employee_id = $${values.length}`;
+        }
+        if (claim_id) {
+            values.push(claim_id);
+            query += ` AND claim_id = $${values.length}`;
+        }
+        if (status) {
+            values.push(status);
+            query += ` AND status = $${values.length}`;
+        }
+
+        query += ' ORDER BY created_at DESC';
+        const result = await pool.query(query, values);
+
+        const claimsWithDocs = await Promise.all(result.rows.map(async claim => {
+            const docs = await pool.query('SELECT id, file_name, file_path FROM documents WHERE claim_id = $1', [claim.claim_id]);
+            return { ...claim, documents: docs.rows };
+        }));
+
+        res.json(claimsWithDocs);
+    } catch (error) {
+        console.error('GET /api/claims error:', error.message);
+        res.status(500).json({ error: 'Server error while fetching claims' });
+    }
+});
+
+// GET /api/claims/:claimId/documents
+app.get('/api/claims/:claimId/documents', async (req, res) => {
+    try {
+        const { claimId } = req.params;
+        const result = await pool.query('SELECT * FROM documents WHERE claim_id = $1', [claimId]);
+
+        const withURLs = result.rows.map(doc => ({
+            ...doc,
+            file_exists: fs.existsSync(doc.file_path),
+            url: fs.existsSync(doc.file_path) ? `/uploads/${path.basename(doc.file_path)}` : null
+        }));
+
+        res.json(withURLs);
+    } catch (error) {
+        console.error('GET /api/claims/:claimId/documents error:', error.message);
+        res.status(500).json({ error: 'Server error while fetching documents' });
+    }
+});
+
+// GET /api/documents/:documentId
+app.get('/api/documents/:documentId', async (req, res) => {
+    try {
+        const { documentId } = req.params;
+        const result = await pool.query('SELECT file_path FROM documents WHERE id = $1', [documentId]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Document not found' });
+
+        const filePath = result.rows[0].file_path;
+        if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found on server' });
+
+        res.sendFile(filePath);
+    } catch (error) {
+        console.error('GET /api/documents/:documentId error:', error.message);
+        res.status(500).json({ error: 'Server error while fetching document' });
+    }
+});
+
+// PATCH /api/claims/:claimId
+app.patch('/api/claims/:claimId', async (req, res) => {
+    try {
+        const { claimId } = req.params;
+        const { status } = req.body;
+
+        if (!['approved', 'rejected'].includes(status)) {
+            return res.status(400).json({ error: 'Status must be approved or rejected' });
+        }
+
+        const result = await pool.query(
+            'UPDATE claims SET status = $1, updated_at = $2 WHERE claim_id = $3 RETURNING *',
+            [status, new Date(), claimId]
+        );
+
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Claim not found' });
+
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('PATCH /api/claims/:claimId error:', error.message);
+        res.status(500).json({ error: 'Server error while updating claim' });
+    }
+});
+
+// Serve frontend
+app.use(express.static(path.join(__dirname, 'Frontend')));
+
+// Multer errors
+app.use((err, req, res, next) => {
+    if (err.message.includes('Only PDF, JPG, and PNG')) return res.status(400).json({ error: err.message });
+    if (err.code === 'LIMIT_FILE_SIZE') return res.status(400).json({ error: 'File exceeds 5MB limit' });
+    res.status(500).json({ error: 'Internal server error' });
+});
+
+// Start server
+const PORT = 3407;
+const HOST = '0.0.0.0';
+
+app.listen(PORT, HOST, async () => {
+    console.log(`🚀 Server running at http://${HOST}:${PORT}`);
+    await waitForPostgres();
+    await initializeDatabase();
+});
+

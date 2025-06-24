@@ -1,16 +1,19 @@
+# Use official Node.js base image
 FROM node:18
 
-# Create app directory
+# Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy rest of the app
+# Copy app source
 COPY . .
 
-# Expose and run
+# Expose backend port
 EXPOSE 3407
+
+# Start the server directly (no wait script)
 CMD ["node", "server.js"]
 
