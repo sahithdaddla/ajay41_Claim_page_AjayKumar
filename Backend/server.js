@@ -33,7 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'Uploads');
 if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir);
+    fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 // PostgreSQL connection
@@ -51,9 +51,12 @@ const storage = multer.diskStorage({
         cb(null, uploadsDir);
     },
     filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     }
 });
+
 const upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
@@ -99,7 +102,7 @@ async function initializeDatabase() {
                 uploaded_at TIMESTAMP
             )
         `);
-        console.log('Database initialized: tables dropped and recreated');
+        console.log('Database initialized: tables created');
     } catch (error) {
         console.error('Error initializing database:', error.message, error.stack);
         process.exit(1);
@@ -114,7 +117,8 @@ app.post('/api/claims', upload.array('documents', 5), async (req, res) => {
     console.log('Files received:', req.files ? req.files.map(f => ({
         originalname: f.originalname,
         mimetype: f.mimetype,
-        size: f.size
+        size: f.size,
+        path: f.path
     })) : 'None');
 
     try {
@@ -183,22 +187,56 @@ app.post('/api/claims', upload.array('documents', 5), async (req, res) => {
         const result = await pool.query(query, values);
         console.log('Database insert result:', result.rows);
 
+        // Process each uploaded file
         for (const file of req.files) {
+            // Ensure the file exists before saving to database
+            if (!fs.existsSync(file.path)) {
+                console.error('File not saved to disk:', file.path);
+                continue;
+            }
+
             const docQuery = `
                 INSERT INTO documents (claim_id, file_name, file_path, uploaded_at)
                 VALUES ($1, $2, $3, $4)
                 RETURNING id
             `;
-            const docValues = [claimId, file.originalname, file.path, new Date()];
+            const docValues = [
+                claimId,
+                file.originalname,
+                file.path,  // This stores the full path to the file
+                new Date()
+            ];
             console.log('Inserting document:', docValues);
             const docResult = await pool.query(docQuery, docValues);
             console.log('Document insert result:', docResult.rows);
         }
 
         console.log('Claim and documents saved successfully');
-        res.status(201).json({ message: 'Claim submitted successfully', claimId });
+        res.status(201).json({ 
+            message: 'Claim submitted successfully', 
+            claimId,
+            documents: req.files.map(f => ({
+                originalName: f.originalname,
+                storedPath: f.path
+            }))
+        });
     } catch (error) {
         console.error('Error processing POST /api/claims:', error.message, error.stack);
+        
+        // Clean up uploaded files if there was an error
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(file => {
+                try {
+                    if (fs.existsSync(file.path)) {
+                        fs.unlinkSync(file.path);
+                        console.log('Deleted file due to error:', file.path);
+                    }
+                } catch (err) {
+                    console.error('Error deleting file:', err.message);
+                }
+            });
+        }
+        
         res.status(500).json({ error: 'Server error while submitting claim' });
     }
 });
@@ -234,8 +272,19 @@ app.get('/api/claims', async (req, res) => {
         query += ' ORDER BY created_at DESC';
         console.log('Executing SQL SELECT:', query, 'with values:', values);
         const result = await pool.query(query, values);
-        console.log('Database select result:', result.rows);
-        res.json(result.rows);
+        
+        // For each claim, get its documents
+        const claimsWithDocuments = await Promise.all(result.rows.map(async claim => {
+            const docsQuery = 'SELECT id, file_name, file_path FROM documents WHERE claim_id = $1';
+            const docsResult = await pool.query(docsQuery, [claim.claim_id]);
+            return {
+                ...claim,
+                documents: docsResult.rows
+            };
+        }));
+        
+        console.log('Returning claims with documents');
+        res.json(claimsWithDocuments);
     } catch (error) {
         console.error('Error processing GET /api/claims:', error.message, error.stack);
         res.status(500).json({ error: 'Server error while fetching claims' });
@@ -253,11 +302,48 @@ app.get('/api/claims/:claimId/documents', async (req, res) => {
         const query = 'SELECT id, claim_id, file_name, file_path, uploaded_at FROM documents WHERE claim_id = $1';
         console.log('Executing SQL SELECT for documents with claim_id:', claimId);
         const result = await pool.query(query, [claimId]);
-        console.log('Database select result:', result.rows);
-        res.json(result.rows);
+        
+        // Verify files exist before returning them
+        const documentsWithExistence = await Promise.all(result.rows.map(async doc => {
+            const exists = fs.existsSync(doc.file_path);
+            return {
+                ...doc,
+                file_exists: exists,
+                url: exists ? `/uploads/${path.basename(doc.file_path)}` : null
+            };
+        }));
+        
+        console.log('Database select result with existence check:', documentsWithExistence);
+        res.json(documentsWithExistence);
     } catch (error) {
         console.error('Error processing GET /api/claims/:claimId/documents:', error.message, error.stack);
         res.status(500).json({ error: 'Server error while fetching documents' });
+    }
+});
+
+// GET /api/documents/:documentId
+app.get('/api/documents/:documentId', async (req, res) => {
+    console.log('Received GET /api/documents/:documentId at', new Date().toISOString());
+    console.log('Params:', req.params);
+
+    try {
+        const { documentId } = req.params;
+        const query = 'SELECT file_path FROM documents WHERE id = $1';
+        const result = await pool.query(query, [documentId]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Document not found' });
+        }
+        
+        const filePath = result.rows[0].file_path;
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ error: 'File not found on server' });
+        }
+        
+        res.sendFile(filePath);
+    } catch (error) {
+        console.error('Error processing GET /api/documents/:documentId:', error.message, error.stack);
+        res.status(500).json({ error: 'Server error while fetching document' });
     }
 });
 
@@ -307,20 +393,23 @@ app.use((err, req, res, next) => {
     if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({ error: 'File size exceeds 5MB limit' });
     }
+    if (err instanceof multer.MulterError) {
+        return res.status(400).json({ error: err.message });
+    }
     res.status(500).json({ error: 'Internal server error' });
 });
 
 // Start server
-//app.listen(3007, '0.0.0.0', () => { 
-//const PORT = 3007;
-//app.listen(PORT, IP_ADDRESS, async () => {
-//    console.log(`Server running on ${IP_ADDRESS}:${PORT}`);
-//    await initializeDatabase();
-
-const PORT = 3007;
+const PORT = 3407;
 const HOST = '0.0.0.0'; // Listen on all interfaces
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server running on http://${HOST}:${PORT}`);
+app.listen(PORT, HOST, async () => {
+    console.log(`Server running on http://${HOST}:${PORT}`);
+    try {
+        await initializeDatabase();
+        console.log('Database initialization complete');
+    } catch (error) {
+        console.error('Failed to initialize database:', error);
+        process.exit(1);
+    }
 });
-

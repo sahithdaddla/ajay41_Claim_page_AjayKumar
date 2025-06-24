@@ -552,7 +552,7 @@ const TYPE_BORDER_COLORS = {
                 console.log('Fetching all claims at', new Date().toISOString());
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
-                const response = await fetch('http://54.166.206.245:3007/api/claims', {
+                const response = await fetch('http://44.223.23.145:3407/api/claims', {
                     signal: controller.signal,
                     headers: { 'Accept': 'application/json' },
                     mode: 'cors'
@@ -725,7 +725,7 @@ const TYPE_BORDER_COLORS = {
                 console.log(`Updating claim ${claimId} to status ${status} at`, new Date().toISOString());
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
-                const response = await fetch(`http://54.166.206.245:3007/api/claims/${claimId}`, {
+                const response = await fetch(`http://44.223.23.145:3407/api/claims/${claimId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -775,12 +775,12 @@ const TYPE_BORDER_COLORS = {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
                 const [claimResponse, documentsResponse] = await Promise.all([
-                    fetch(`http://54.166.206.245:3007/api/claims?claim_id=${claimId}`, {
+                    fetch(`http://44.223.23.145:3407/api/claims?claim_id=${claimId}`, {
                         signal: controller.signal,
                         headers: { 'Accept': 'application/json' },
                         mode: 'cors'
                     }),
-                    fetch(`http://54.166.206.245:3007/api/claims/${claimId}/documents`, {
+                    fetch(`http://44.223.23.145:3407/api/claims/${claimId}/documents`, {
                         signal: controller.signal,
                         headers: { 'Accept': 'application/json' },
                         mode: 'cors'

@@ -36,25 +36,87 @@
         }
 
         .container {
-            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--purple));
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
             text-align: center;
-            animation: fadeIn 0.8s ease-out;
+            height: 140px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
-        h1 {
+        header h1 {
+            margin: 0;
             font-size: 2.5rem;
-            margin-bottom: 10px;
+            color: white;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-weight: 300;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        @keyframes moveCircles {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-50%) translateX(-50%); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+
+        .banner-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .circle {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: moveCircles 15s infinite linear;
+        }
+
+        .circle:nth-child(1) {
+            top: 10%;
+            left: 20%;
+            animation-duration: 15s;
+        }
+
+        .circle:nth-child(2) {
+            top: 50%;
+            left: 70%;
+            animation-duration: 20s;
+            animation-direction: reverse;
+        }
+
+        .circle:nth-child(3) {
+            top: 80%;
+            left: 40%;
+            animation-duration: 25s;
         }
 
         .nav-tabs {
@@ -301,7 +363,7 @@
         }
 
         .error {
-            color: #e74c3c;
+            color: var(--red);
             font-size: 0.85rem;
             margin-top: 5px;
             display: none;
@@ -334,19 +396,11 @@
             animation: bounce 1s;
         }
 
-        .claim-history {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--gray);
-            animation: fadeIn 0.8s ease-out;
-        }
-
         .history-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            table-layout: fixed;
         }
 
         .history-table th,
@@ -355,6 +409,10 @@
             border-bottom: 1px solid var(--gray);
             text-align: left;
             vertical-align: middle;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .history-table th {
@@ -364,8 +422,17 @@
         }
 
         .history-table td {
-            font-size: 0.9rem;
+            max-width: 150px;
         }
+
+        .history-table th:nth-child(1), .history-table td:nth-child(1) { width: 10%; } /* Claim ID */
+        .history-table th:nth-child(2), .history-table td:nth-child(2) { width: 12%; } /* Employee ID */
+        .history-table th:nth-child(3), .history-table td:nth-child(3) { width: 18%; } /* Employee Name */
+        .history-table th:nth-child(4), .history-table td:nth-child(4) { width: 12%; } /* Type */
+        .history-table th:nth-child(5), .history-table td:nth-child(5) { width: 12%; } /* Date */
+        .history-table th:nth-child(6), .history-table td:nth-child(6) { width: 10%; } /* Amount */
+        .history-table th:nth-child(7), .history-table td:nth-child(7) { width: 15%; } /* Status */
+        .history-table th:nth-child(8), .history-table td:nth-child(8) { width: 10%; } /* Action */
 
         .history-table tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -375,12 +442,20 @@
             background-color: var(--light-blue);
         }
 
-        .status {
+        .status, .view-details {
             padding: 5px 10px;
             border-radius: 20px;
             font-size: 0.8rem;
-            width: 200px !important;
             font-weight: 500;
+            display: inline-block;
+            width: 100px;
+            text-align: center;
+        }
+
+        .view-details {
+            background-color: var(--primary-blue);
+            color: white;
+            text-decoration: none;
         }
 
         .status-pending {
@@ -474,6 +549,24 @@
             gap: 10px;
         }
 
+        @media (max-width: 768px) {
+            .history-table th, .history-table td {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+
+            .history-table td {
+                max-width: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .history-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -500,9 +593,15 @@
 <body>
     <div class="container">
         <header>
+            <div class="banner-background">
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="circle"></div>
+            </div>
             <h1>Employee Claims Portal</h1>
             <p>Submit and track your reimbursement claims</p>
         </header>
+        
         <div class="nav-tabs">
             <div class="nav-tab active" onclick="showSection('request-claim')">Request Claim</div>
             <div class="nav-tab" onclick="showSection('claim-history')">Claim History</div>
@@ -551,22 +650,22 @@
             </div>
 
             <div class="form-container" id="claimFormContainer">
-                <form id="claimForm" onsubmit="return false">
+                <form id="claimForm" onsubmit="return false" novalidate>
                     <h3 class="form-title"><i class="fas fa-file-invoice"></i> <span id="formTitle">Claim Form</span></h3>
                     
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="empName">Employee Name</label>
-                                <input type="text" id="empName" name="empName" placeholder="Enter your full name">
-                                <div class="error" id="empNameError">Please enter a valid name (only letters, no leading/trailing spaces)</div>
+                                <input type="text" id="empName" name="empName" placeholder="Enter your full name" required minlength="3" maxlength="100">
+                                <div class="error" id="empNameError">Invalid name: No leading/trailing spaces, no consecutive spaces, only letters and allowed dots</div>
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="empEmail">Email Address</label>
-                                <input type="email" id="empEmail" name="empEmail" placeholder="Enter your email">
-                                <div class="error" id="empEmailError">Please enter a valid email (@gmail.com or @outlook.com)</div>
+                                <input type="email" id="empEmail" name="empEmail" placeholder="Enter your email" required minlength="3" maxlength="100" onkeypress="return (event.charCode != 32)">
+                                <div class="error" id="empEmailError">Valid email required (e.g., user123@gmail.com, user.name@outlook.com, user-1@company.co), min 3 chars before @, no spaces allowed</div>
                             </div>
                         </div>
                     </div>
@@ -575,15 +674,15 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="empId">Employee ID</label>
-                                <input type="text" id="empId" name="empId" placeholder="ATS01234">
+                                <input type="text" id="empId" name="empId" placeholder="ATS0123" required minlength="7" maxlength="7">
                                 <div class="error" id="empIdError">Employee ID must be ATS0 followed by 3 digits (not all zeros)</div>
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="department">Department</label>
-                                <select id="department" name="department">
-                                    <option value="">Select Department</option>
+                                <select id="department" name="department" required>
+                                    <option value="" disabled selected>Select Department</option>
                                     <option value="HR">Human Resources</option>
                                     <option value="IT">Information Technology</option>
                                     <option value="Finance">Finance</option>
@@ -597,26 +696,26 @@
                     
                     <div class="form-group">
                         <label for="claimDate">Date of Service</label>
-                        <input type="date" id="claimDate" name="claimDate">
+                        <input type="date" id="claimDate" name="claimDate" required>
                         <div class="error" id="claimDateError">Date must be within last 3 months and not in the future</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="amount">Claim Amount (₹)</label>
-                        <input type="number" id="amount" name="amount" placeholder="Enter amount">
+                        <input type="number" id="amount" name="amount" placeholder="Enter amount" step="1" required>
                         <div class="error" id="amountError">Please enter a valid amount (max ₹50,000)</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea id="description" name="description" rows="3" placeholder="Describe the expense"></textarea>
-                        <div class="error" id="descriptionError">Please provide a description (max 200 characters)</div>
+                        <textarea id="description" name="description" rows="3" placeholder="Describe the expense" minlength="10" maxlength="300" required></textarea>
+                        <div class="error" id="descriptionError">Invalid description: No leading/trailing spaces, no consecutive spaces, must start with a letter, only letters, numbers, spaces, commas, periods</div>
                     </div>
                     
                     <div class="form-group">
                         <label>Upload Supporting Documents</label>
                         <div class="file-upload">
-                            <input type="file" id="documents" name="documents" accept=".pdf,.jpg,.png" multiple>
+                            <input type="file" id="documents" name="documents" accept=".pdf,.jpg,.png" multiple required>
                             <label for="documents" class="file-label">
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 <span>Choose files (PDF, JPG, PNG)</span>
@@ -642,12 +741,12 @@
                     <thead>
                         <tr>
                             <th>Claim ID</th>
+                            <th>Employee ID</th>
+                            <th>Employee Name</th>
                             <th>Type</th>
                             <th>Date</th>
                             <th>Amount</th>
                             <th>Status</th>
-                            <th>Employee ID</th>
-                            <th>Employee Name</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -670,9 +769,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="modal-details" id="claimDetails"></div>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal('detailsModal')">Close</button>
                 </div>
             </div>
         </div>
@@ -697,7 +793,6 @@
     <script>
         let currentClaimType = '';
         let validationTimeout;
-        let submitCallback = null;
 
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
@@ -705,10 +800,8 @@
             document.getElementById(sectionId).classList.add('active');
             document.querySelector(`.nav-tab[onclick="showSection('${sectionId}')"]`).classList.add('active');
             closeAllForms();
-            // Only hide success message if navigating away from request-claim
             if (sectionId !== 'request-claim') {
-                const successMessage = document.getElementById('successMessage');
-                successMessage.classList.remove('show');
+                document.getElementById('successMessage').classList.remove('show');
             }
             document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
 
@@ -719,8 +812,7 @@
 
         function openClaimForm(claimType) {
             closeAllForms();
-            const successMessage = document.getElementById('successMessage');
-            successMessage.classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
             currentClaimType = claimType.charAt(0).toUpperCase() + claimType.slice(1);
             document.getElementById('formTitle').textContent = `${currentClaimType} Claim Form`;
             document.getElementById('claimFormContainer').classList.add('active');
@@ -729,6 +821,8 @@
 
         function closeAllForms() {
             document.querySelectorAll('.form-container').forEach(form => form.classList.remove('active'));
+            document.getElementById('claimForm').reset();
+            document.getElementById('fileName').textContent = 'No files chosen';
         }
 
         function closeModal(modalId) {
@@ -736,18 +830,32 @@
         }
 
         function validateName() {
-            const name = document.getElementById('empName').value.trim();
-            const nameRegex = /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/;
+            const name = document.getElementById('empName').value;
+            const nameRegex = /^[A-Za-z]+(?:\.[A-Za-z]+)*(?: [A-Za-z]+)*(?:\.[A-Za-z]+){0,3}$/;
+            const consecutiveSpaces = /\s{2,}/;
+            const leadingTrailingSpaces = /^\s+|\s+$/;
             const errorElement = document.getElementById('empNameError');
             
             if (!name) {
                 errorElement.textContent = 'Name is required';
-                errorElement.classList.remove('show');
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (leadingTrailingSpaces.test(name)) {
+                errorElement.textContent = 'No leading or trailing spaces allowed';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (consecutiveSpaces.test(name)) {
+                errorElement.textContent = 'No consecutive spaces allowed';
+                errorElement.classList.add('show');
                 return false;
             }
             
             if (!nameRegex.test(name)) {
-                errorElement.textContent = 'Only letters and spaces allowed';
+                errorElement.textContent = 'Invalid name: Only letters, single spaces, and up to 3 dot-separated suffixes (e.g., John.M.Doe Smith.Jr)';
                 errorElement.classList.add('show');
                 return false;
             }
@@ -757,18 +865,31 @@
         }
 
         function validateEmail() {
-            const email = document.getElementById('empEmail').value.trim();
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail|outlook)\.com$/;
+            const emailInput = document.getElementById('empEmail').value;
+            const hasSpaces = /\s/;
+            const emailRegex = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|(?![._-]{2})[._-]){2,}@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$/;
             const errorElement = document.getElementById('empEmailError');
             
-            if (!email) {
+            // Remove any spaces and update input
+            const sanitizedEmail = emailInput.replace(/\s+/g, '');
+            if (emailInput !== sanitizedEmail) {
+                document.getElementById('empEmail').value = sanitizedEmail;
+            }
+            
+            if (!sanitizedEmail) {
                 errorElement.textContent = 'Email is required';
-                errorElement.classList.remove('show');
+                errorElement.classList.add('show');
                 return false;
             }
             
-            if (!emailRegex.test(email)) {
-                errorElement.textContent = 'Valid Gmail or Outlook email required';
+            if (hasSpaces.test(emailInput)) {
+                errorElement.textContent = 'No spaces allowed in email';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (!emailRegex.test(sanitizedEmail)) {
+                errorElement.textContent = 'Valid email required (e.g., user123@gmail.com, user.name@outlook.com, user-1@company.co), min 3 chars before @, no consecutive _-.';
                 errorElement.classList.add('show');
                 return false;
             }
@@ -779,17 +900,17 @@
 
         function validateEmpId() {
             const empId = document.getElementById('empId').value.trim();
-            const empIdRegex = /^ATS0[1-9]\d{2}$/;
+            const empIdRegex = /^[ATS]{3}0(?!000)[0-9]{3}$/;
             const errorElement = document.getElementById('empIdError');
             
             if (!empId) {
                 errorElement.textContent = 'Employee ID is required';
-                errorElement.classList.remove('show');
+                errorElement.classList.add('show');
                 return false;
             }
             
             if (!empIdRegex.test(empId)) {
-                errorElement.textContent = 'Format: ATS followed by 3 digits (e.g., ATS0123)';
+                errorElement.textContent = 'Format: ATS0 followed by 3 digits (not all zeros)';
                 errorElement.classList.add('show');
                 return false;
             }
@@ -874,7 +995,11 @@
         }
 
         function validateDescription() {
-            const description = document.getElementById('description').value.trim();
+            const description = document.getElementById('description').value;
+            const descRegex = /^[A-Za-z][A-Za-z0-9\s,.]*[A-Za-z0-9]$/;
+            const consecutiveSpaces = /\s{2,}/;
+            const leadingTrailingSpaces = /^\s+|\s+$/;
+            const invalidConsecutive = /(,{2,}|\.{2,}|,\s,|\.\s\.|,\s\.|\.\s,)/;
             const errorElement = document.getElementById('descriptionError');
             
             if (!description) {
@@ -883,8 +1008,32 @@
                 return false;
             }
             
+            if (leadingTrailingSpaces.test(description)) {
+                errorElement.textContent = 'No leading or trailing spaces allowed';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (consecutiveSpaces.test(description)) {
+                errorElement.textContent = 'No consecutive spaces allowed';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
             if (description.length > 200) {
                 errorElement.textContent = 'Description cannot exceed 200 characters';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (!descRegex.test(description)) {
+                errorElement.textContent = 'Invalid description: Must start with a letter, end with a letter or number, only letters, numbers, spaces, commas, periods';
+                errorElement.classList.add('show');
+                return false;
+            }
+            
+            if (invalidConsecutive.test(description)) {
+                errorElement.textContent = 'No consecutive commas, periods, or invalid punctuation patterns';
                 errorElement.classList.add('show');
                 return false;
             }
@@ -903,38 +1052,64 @@
                 return false;
             }
             
+            for (const file of documents) {
+                const validTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+                if (!validTypes.includes(file.type)) {
+                    errorElement.textContent = 'Only PDF, JPG, or PNG files allowed';
+                    errorElement.classList.add('show');
+                    return false;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    errorElement.textContent = 'Each file must be under 5MB';
+                    errorElement.classList.add('show');
+                    return false;
+                }
+            }
+            
             errorElement.classList.remove('show');
             return true;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('empName').addEventListener('input', function() {
-                clearTimeout(validationTimeout);
-                validationTimeout = setTimeout(validateName, 500);
+            const inputs = [
+                { id: 'empName', validator: validateName },
+                { id: 'empEmail', validator: validateEmail },
+                { id: 'empId', validator: validateEmpId },
+                { id: 'amount', validator: validateAmount },
+                { id: 'description', validator: validateDescription }
+            ];
+
+            inputs.forEach(({ id, validator }) => {
+                document.getElementById(id).addEventListener('input', () => {
+                    // Immediate validation for email, delayed for others
+                    if (id === 'empEmail') {
+                        validator();
+                    } else {
+                        clearTimeout(validationTimeout);
+                        validationTimeout = setTimeout(validator, 500);
+                    }
+                });
             });
-            
-            document.getElementById('empEmail').addEventListener('input', function() {
-                clearTimeout(validationTimeout);
-                validationTimeout = setTimeout(validateEmail, 500);
+
+            // Prevent spaces in email input
+            const emailInput = document.getElementById('empEmail');
+            emailInput.addEventListener('keydown', function(e) {
+                if (e.key === ' ' || e.key === 'Spacebar' || /\s/.test(e.key)) {
+                    e.preventDefault();
+                }
             });
-            
-            document.getElementById('empId').addEventListener('input', function() {
-                clearTimeout(validationTimeout);
-                validationTimeout = setTimeout(validateEmpId, 500);
+
+            // Handle paste event to remove spaces
+            emailInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const sanitizedText = pastedText.replace(/\s+/g, '');
+                document.execCommand('insertText', false, sanitizedText);
+                validateEmail();
             });
-            
+
             document.getElementById('department').addEventListener('change', validateDepartment);
             document.getElementById('claimDate').addEventListener('change', validateClaimDate);
-            
-            document.getElementById('amount').addEventListener('input', function() {
-                clearTimeout(validationTimeout);
-                validationTimeout = setTimeout(validateAmount, 500);
-            });
-            
-            document.getElementById('description').addEventListener('input', function() {
-                clearTimeout(validationTimeout);
-                validationTimeout = setTimeout(validateDescription, 500);
-            });
             
             document.getElementById('documents').addEventListener('change', function(e) {
                 const files = e.target.files;
@@ -955,14 +1130,25 @@
             const dateInput = document.getElementById('claimDate');
             dateInput.max = formatDate(today);
             dateInput.min = formatDate(threeMonthsAgo);
-            showSection('request-claim');
 
             const empId = sessionStorage.getItem('employeeId');
             if (empId) {
                 document.getElementById('empId').value = empId;
                 validateEmpId();
             }
+
+            showSection('request-claim');
         });
+
+        function formatDate(date) {
+            const d = new Date(date);
+            let month = '' + (d.getMonth() + 1);
+            let day = '' + d.getDate();
+            const year = d.getFullYear();
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            return [year, month, day].join('-');
+        }
 
         function delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -992,7 +1178,7 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-                const response = await fetch('http://54.166.206.245:3007/api/claims', {
+                const response = await fetch('http://44.223.23.145:3407/api/claims', {
                     method: 'POST',
                     body: formData,
                     signal: controller.signal,
@@ -1007,9 +1193,8 @@
                 let result;
                 try {
                     result = await response.json();
-                    console.log('POST response:', { status: response.status, result });
                 } catch (jsonError) {
-                    console.error('Error parsing JSON response:', jsonError, 'Status:', response.status, 'StatusText:', response.statusText);
+                    console.error('Error parsing JSON response:', jsonError, 'Status:', response.status);
                     alert(`Server returned invalid response: ${response.status} ${response.statusText}`);
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Claim';
@@ -1017,8 +1202,8 @@
                 }
 
                 if (response.status !== 201) {
-                    console.error('Server error response:', result, 'Status:', response.status, 'StatusText:', response.statusText);
-                    alert(`Server error: ${result.error || 'Failed to submit claim (status ' + response.status + ')'}`);
+                    console.error('Server error response:', result, 'Status:', response.status);
+                    alert(`Server error: ${result.error || 'Failed to submit claim'}`);
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit Claim';
                     return;
@@ -1027,26 +1212,19 @@
                 const empId = document.getElementById('empId').value.trim();
                 sessionStorage.setItem('employeeId', empId);
                 
-                // Reset form
                 document.getElementById('claimForm').reset();
                 document.getElementById('fileName').textContent = 'No files chosen';
-                
-                // Close form
                 closeAllForms();
                 
-                // Show success message
                 const successMessage = document.getElementById('successMessage');
                 successMessage.classList.add('show');
                 successMessage.scrollIntoView({ behavior: 'smooth' });
                 
-                // Update claim history
                 await updateClaimHistory();
                 
-                // Re-enable submit button
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Claim';
                 
-                // Keep success message visible for 5 seconds before navigating
                 await delay(5000);
                 if (successMessage.classList.contains('show')) {
                     successMessage.classList.remove('show');
@@ -1058,14 +1236,13 @@
                 
                 try {
                     const empId = document.getElementById('empId').value.trim();
-                    let claimsResponse = await fetch(`http://54.166.206.245:3007/api/claims`, {
+                    let claimsResponse = await fetch(`http://44.223.23.145:3407/api/claims`, {
                         headers: { 'Accept': 'application/json' },
                         mode: 'cors'
                     });
                     let claims = await claimsResponse.json();
                     if (!claimsResponse.ok || !Array.isArray(claims)) {
-                        console.warn('Primary fetch failed, trying with employee_id:', empId);
-                        claimsResponse = await fetch(`http://54.166.206.245:3007/api/claims?employee_id=${empId}`, {
+                        claimsResponse = await fetch(`http://44.223.23.145:3407/api/claims?employee_id=${empId}`, {
                             headers: { 'Accept': 'application/json' },
                             mode: 'cors'
                         });
@@ -1091,8 +1268,6 @@
                             successMessage.classList.remove('show');
                             showSection('claim-history');
                         }
-                        
-                        console.log('Claim submitted successfully via fallback check');
                         return;
                     }
                 } catch (fallbackError) {
@@ -1102,9 +1277,9 @@
                 if (error.name === 'AbortError') {
                     alert('Error submitting claim: Request timed out. Try smaller files or check server.');
                 } else if (error.message.includes('Failed to fetch')) {
-                    alert('Error submitting claim: Unable to connect to server. Check network, CORS, or server status.');
+                    alert('Error submitting claim: Unable to connect to server. Check network or server status.');
                 } else {
-                    alert('Error submitting claim to server: ' + error.message);
+                    alert('Error submitting claim: ' + error.message);
                 }
                 
                 submitBtn.disabled = false;
@@ -1124,22 +1299,22 @@
         document.getElementById('claimForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const isNameValid = validateName();
-            const isEmailValid = validateEmail();
-            const isEmpIdValid = validateEmpId();
-            const isDeptValid = validateDepartment();
-            const isDateValid = validateClaimDate();
-            const isAmountValid = validateAmount();
-            const isDescValid = validateDescription();
-            const isDocsValid = validateDocuments();
+            const validations = [
+                validateName(),
+                validateEmail(),
+                validateEmpId(),
+                validateDepartment(),
+                validateClaimDate(),
+                validateAmount(),
+                validateDescription(),
+                validateDocuments()
+            ];
 
-            if (!isNameValid || !isEmailValid || !isEmpIdValid || !isDeptValid || 
-                !isDateValid || !isAmountValid || !isDescValid || !isDocsValid) {
+            if (validations.every(valid => valid)) {
+                document.getElementById('confirmModal').style.display = 'flex';
+            } else {
                 alert('Please correct the form errors before submitting.');
-                return;
             }
-
-            document.getElementById('confirmModal').style.display = 'flex';
         });
 
         async function updateClaimHistory() {
@@ -1158,11 +1333,9 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
                 
-                let response = await fetch(`http://54.166.206.245:3007/api/claims`, {
+                let response = await fetch(`http://44.223.23.145:3407/api/claims`, {
                     signal: controller.signal,
-                    headers: {
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Accept': 'application/json' },
                     mode: 'cors'
                 });
                 
@@ -1170,19 +1343,14 @@
 
                 let claims;
                 if (!response.ok) {
-                    console.warn(`Primary fetch failed: ${response.status} ${response.statusText}`);
                     const empId = sessionStorage.getItem('employeeId');
                     if (empId) {
-                        console.log(`Retrying with employee_id: ${empId}`);
-                        response = await fetch(`http://54.166.206.245:3007/api/claims?employee_id=${empId}`, {
+                        response = await fetch(`http://44.223.23.145:3407/api/claims?employee_id=${empId}`, {
                             signal: controller.signal,
-                            headers: {
-                                'Accept': 'application/json'
-                            },
+                            headers: { 'Accept': 'application/json' },
                             mode: 'cors'
                         });
                     } else {
-                        console.error('No employee ID in sessionStorage, cannot retry');
                         throw new Error(`Server error: ${response.status} ${response.statusText}`);
                     }
                 }
@@ -1190,35 +1358,35 @@
                 try {
                     claims = await response.json();
                 } catch (jsonError) {
-                    console.error('Error parsing JSON response:', jsonError, 'Status:', response.status, 'StatusText:', response.statusText);
+                    console.error('Error parsing JSON response:', jsonError, 'Status:', response.status);
                     throw new Error(`Invalid server response: ${response.status} ${response.statusText}`);
                 }
 
                 if (!response.ok) {
-                    console.error('Claim history fetch error:', claims, 'Status:', response.status, 'StatusText:', response.statusText);
-                    throw new Error(`${claims.error || 'Server error (status ' + response.status + ')'}`);
+                    throw new Error(`${claims.error || 'Server error'}`);
                 }
 
                 if (!Array.isArray(claims) || claims.length === 0) {
                     noHistory.style.display = 'block';
                 } else {
                     claims.forEach(claim => {
+                        const truncate = (str, max = 20) => str.length > max ? str.slice(0, max) + '...' : str;
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${claim.claim_id}</td>
-                            <td>${claim.type}</td>
-                            <td>${new Date(claim.claim_date).toLocaleDateString()}</td>
-                            <td>₹${claim.amount.toLocaleString()}</td>
-                            <td><span class="status status-${claim.status}">${claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}</span></td>
-                            <td>${claim.employee_id}</td>
-                            <td>${claim.employee_name}</td>
+                            <td title="${claim.claim_id}">${truncate(claim.claim_id)}</td>
+                            <td title="${claim.employee_id}">${truncate(claim.employee_id)}</td>
+                            <td title="${claim.employee_name}">${truncate(claim.employee_name)}</td>
+                            <td title="${claim.type}">${truncate(claim.type)}</td>
+                            <td title="${new Date(claim.claim_date).toLocaleDateString()}">${truncate(new Date(claim.claim_date).toLocaleDateString())}</td>
+                            <td title="₹${claim.amount.toLocaleString()}">₹${truncate(claim.amount.toLocaleString())}</td>
+                            <td><span class="status status-${claim.status}">${truncate(claim.status.charAt(0).toUpperCase() + claim.status.slice(1), 10)}</span></td>
                             <td><a href="#" class="view-details" onclick="viewClaim('${claim.claim_id}')">View</a></td>
                         `;
                         tableBody.appendChild(row);
                     });
                 }
             } catch (error) {
-                console.error('Error fetching claim history:', error.message, error.stack);
+                console.error('Error fetching claim history:', error.message);
                 noHistory.style.display = 'block';
             }
         }
@@ -1229,12 +1397,12 @@
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
                 
                 const [claimResponse, documentsResponse] = await Promise.all([
-                    fetch(`http://54.166.206.245:3007/api/claims?claim_id=${claimId}`, { 
+                    fetch(`http://44.223.23.145:3407/api/claims?claim_id=${claimId}`, { 
                         signal: controller.signal, 
                         headers: { 'Accept': 'application/json' }, 
                         mode: 'cors' 
                     }),
-                    fetch(`http://54.166.206.245:3007/api/claims/${claimId}/documents`, { 
+                    fetch(`http://44.223.23.145:3407/api/claims/${claimId}/documents`, { 
                         signal: controller.signal, 
                         headers: { 'Accept': 'application/json' }, 
                         mode: 'cors' 
@@ -1248,20 +1416,20 @@
                     claims = await claimResponse.json();
                     documents = await documentsResponse.json();
                 } catch (jsonError) {
-                    console.error('Error parsing JSON response:', jsonError, 'Claim Response Status:', claimResponse.status, 'Documents Response Status:', documentsResponse.status);
+                    console.error('Error parsing JSON response:', jsonError);
                     alert('Server returned invalid response for claim details');
                     return;
                 }
 
                 if (!claimResponse.ok) {
-                    console.error('Claim fetch error:', claims, 'Status:', claimResponse.status, 'StatusText:', claimResponse.statusText);
-                    alert(`Error fetching claim details: ${claims.error || 'Server error (status ' + claimResponse.status + ')'}`);
+                    console.error('Claim fetch error:', claims, 'Status:', claimResponse.status);
+                    alert(`Error fetching claim details: ${claims.error || 'Server error'}`);
                     return;
                 }
 
                 if (!documentsResponse.ok) {
-                    console.error('Documents fetch error:', documents, 'Status:', documentsResponse.status, 'StatusText:', documentsResponse.statusText);
-                    alert(`Error fetching claim documents: ${documents.error || 'Server error (status ' + documentsResponse.status + ')'}`);
+                    console.error('Documents fetch error:', documents, 'Status:', documentsResponse.status);
+                    alert(`Error fetching claim documents: ${documents.error || 'Server error'}`);
                     return;
                 }
 
@@ -1289,19 +1457,9 @@
 
                 document.getElementById('detailsModal').style.display = 'flex';
             } catch (error) {
-                console.error('Error fetching claim details:', error.message, error.stack);
+                console.error('Error fetching claim details:', error.message);
                 alert('Error fetching claim details: ' + error.message);
             }
-        }
-
-        function formatDate(date) {
-            const d = new Date(date);
-            let month = '' + (d.getMonth() + 1);
-            let day = '' + d.getDate();
-            const year = d.getFullYear();
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-            return [year, month, day].join('-');
         }
     </script>
 </body>
