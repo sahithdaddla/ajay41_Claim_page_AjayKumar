@@ -38,7 +38,6 @@
         .container {
             margin: 0 auto;
             padding: 20px;
-            max-width: 1200px;
         }
 
         header {
@@ -1498,7 +1497,7 @@
                     <p><strong>Description:</strong> ${claim.description}</p>
                     <p><strong>Status:</strong> ${claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}</p>
                     <p><strong>Documents:</strong></p>
-                    ${documents.map(doc => `<p><a href="http://44.223.23.145:3407/uploads/${doc.file_path}" target="_blank">${doc.file_name}</a></p>`).join('')}
+                    ${documents.map(doc => `<p><a href="${doc.file_path}" target="_blank">${doc.file_name}</a></p>`).join('')}
                 `;
 
                 document.getElementById('detailsModal').style.display = 'flex';

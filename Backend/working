@@ -33,7 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'Uploads')));
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'Uploads');
 if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(UploadsDir, { recursive: true });
+    fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 // PostgreSQL connection
@@ -135,9 +135,9 @@ app.post('/api/claims', upload.array('documents', 5), async (req, res) => {
             return res.status(400).json({ error: 'Employee ID must be ATS0 followed by 3 digits (e.g., ATS0123)' });
         }
 
-        if (!/^[a-zA-Z0-9](?:[a-zA-Z0-9]|(?![._-]{2})[._-]){2,}@astrolitetech\.com$/.test(empEmail)) {
+        if (!/^[a-zA-Z0-9._%+-]+@(gmail|outlook)\.com$/.test(empEmail)) {
             console.log('Validation failed: Invalid email');
-            return res.status(400).json({ error: 'Email must be a valid @astrolitetech.com address, min 3 chars before @, no consecutive _-.' });
+            return res.status(400).json({ error: 'Email must be a valid @gmail.com or @outlook.com address' });
         }
 
         const amountValue = parseFloat(amount);

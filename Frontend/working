@@ -38,7 +38,6 @@
         .container {
             margin: 0 auto;
             padding: 20px;
-            max-width: 1200px;
         }
 
         header {
@@ -394,7 +393,7 @@
         .success-icon {
             font-size: 3rem;
             margin-bottom: 15px;
-            animation: bounce 1s infinite;
+            animation: bounce 1s;
         }
 
         .history-table {
@@ -666,7 +665,7 @@
                             <div class="form-group">
                                 <label for="empEmail">Email Address</label>
                                 <input type="email" id="empEmail" name="empEmail" placeholder="Enter your email" required minlength="3" maxlength="100" onkeypress="return (event.charCode != 32)">
-                                <div class="error" id="empEmailError">Email must be in the format user@astrolitetech.com, min 3 chars before @, no spaces allowed</div>
+                                <div class="error" id="empEmailError">Valid email required (e.g., user123@gmail.com, user.name@outlook.com, user-1@company.co), min 3 chars before @, no spaces allowed</div>
                             </div>
                         </div>
                     </div>
@@ -737,21 +736,7 @@
         <section id="claim-history" class="section claim-history">
             <h2 class="section-title">Claim History</h2>
             
-            <div class="form-container active" id="historyEmpIdFormContainer">
-                <form id="historyEmpIdForm" onsubmit="return false" novalidate>
-                    <h3 class="form-title"><i class="fas fa-user"></i> Enter Employee ID</h3>
-                    <div class="form-group">
-                        <label for="historyEmpId">Employee ID</label>
-                        <input type="text" id="historyEmpId" name="historyEmpId" placeholder="ATS0123" required minlength="7" maxlength="7">
-                        <div class="error" id="historyEmpIdError">Employee ID must be ATS0 followed by 3 digits (not all zeros)</div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary" onclick="fetchClaimHistory()">View Claims</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="history-content" id="historyContent" style="display: none;">
+            <div class="history-content">
                 <table class="history-table" id="historyTable">
                     <thead>
                         <tr>
@@ -771,7 +756,7 @@
                 <div class="no-history" id="noHistory" style="display: none;">
                     <i class="fas fa-folder-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
                     <h3>No Claim History Found</h3>
-                    <p>No claims found for this Employee ID. Use the Request Claim section to submit a claim.</p>
+                    <p>You haven't submitted any claims yet. Use the Request Claim section to submit your first claim.</p>
                 </div>
             </div>
         </section>
@@ -821,14 +806,7 @@
             document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
 
             if (sectionId === 'claim-history') {
-                document.getElementById('historyEmpIdFormContainer').classList.add('active');
-                document.getElementById('historyContent').style.display = 'none';
-                const historyEmpId = document.getElementById('historyEmpId');
-                const storedEmpId = sessionStorage.getItem('employeeId');
-                if (storedEmpId) {
-                    historyEmpId.value = storedEmpId;
-                    validateHistoryEmpId();
-                }
+                updateClaimHistory();
             }
         }
 
@@ -889,7 +867,7 @@
         function validateEmail() {
             const emailInput = document.getElementById('empEmail').value;
             const hasSpaces = /\s/;
-            const emailRegex = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|(?![._-]{2})[._-]){2,}@astrolitetech\.com$/;
+            const emailRegex = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|(?![._-]{2})[._-]){2,}@(?:gmail\.com|outlook\.com|[\w-]+\.(?:co|in|org))$/;
             const errorElement = document.getElementById('empEmailError');
             
             // Remove any spaces and update input
@@ -911,7 +889,7 @@
             }
             
             if (!emailRegex.test(sanitizedEmail)) {
-                errorElement.textContent = 'Email must be in the format user@astrolitetech.com, min 3 chars before @, no consecutive _-.';
+                errorElement.textContent = 'Valid email required (e.g., user123@gmail.com, user.name@outlook.com, user-1@company.co), min 3 chars before @, no consecutive _-.';
                 errorElement.classList.add('show');
                 return false;
             }
@@ -924,27 +902,6 @@
             const empId = document.getElementById('empId').value.trim();
             const empIdRegex = /^[ATS]{3}0(?!000)[0-9]{3}$/;
             const errorElement = document.getElementById('empIdError');
-            
-            if (!empId) {
-                errorElement.textContent = 'Employee ID is required';
-                errorElement.classList.add('show');
-                return false;
-            }
-            
-            if (!empIdRegex.test(empId)) {
-                errorElement.textContent = 'Format: ATS0 followed by 3 digits (not all zeros)';
-                errorElement.classList.add('show');
-                return false;
-            }
-            
-            errorElement.classList.remove('show');
-            return true;
-        }
-
-        function validateHistoryEmpId() {
-            const empId = document.getElementById('historyEmpId').value.trim();
-            const empIdRegex = /^[ATS]{3}0(?!000)[0-9]{3}$/;
-            const errorElement = document.getElementById('historyEmpIdError');
             
             if (!empId) {
                 errorElement.textContent = 'Employee ID is required';
@@ -1119,22 +1076,19 @@
                 { id: 'empEmail', validator: validateEmail },
                 { id: 'empId', validator: validateEmpId },
                 { id: 'amount', validator: validateAmount },
-                { id: 'description', validator: validateDescription },
-                { id: 'historyEmpId', validator: validateHistoryEmpId }
+                { id: 'description', validator: validateDescription }
             ];
 
             inputs.forEach(({ id, validator }) => {
-                const inputElement = document.getElementById(id);
-                if (inputElement) {
-                    inputElement.addEventListener('input', () => {
-                        if (id === 'empEmail') {
-                            validator();
-                        } else {
-                            clearTimeout(validationTimeout);
-                            validationTimeout = setTimeout(validator, 500);
-                        }
-                    });
-                }
+                document.getElementById(id).addEventListener('input', () => {
+                    // Immediate validation for email, delayed for others
+                    if (id === 'empEmail') {
+                        validator();
+                    } else {
+                        clearTimeout(validationTimeout);
+                        validationTimeout = setTimeout(validator, 500);
+                    }
+                });
             });
 
             // Prevent spaces in email input
@@ -1363,20 +1317,7 @@
             }
         });
 
-        async function fetchClaimHistory() {
-            if (!validateHistoryEmpId()) {
-                alert('Please enter a valid Employee ID.');
-                return;
-            }
-
-            const empId = document.getElementById('historyEmpId').value.trim();
-            sessionStorage.setItem('employeeId', empId);
-            await updateClaimHistory(empId);
-            document.getElementById('historyEmpIdFormContainer').classList.remove('active');
-            document.getElementById('historyContent').style.display = 'block';
-        }
-
-        async function updateClaimHistory(empId) {
+        async function updateClaimHistory() {
             const tableBody = document.querySelector('#historyTable tbody');
             const noHistory = document.getElementById('noHistory');
 
@@ -1392,7 +1333,7 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
                 
-                const response = await fetch(`http://44.223.23.145:3407/api/claims?employee_id=${empId}`, {
+                let response = await fetch(`http://44.223.23.145:3407/api/claims`, {
                     signal: controller.signal,
                     headers: { 'Accept': 'application/json' },
                     mode: 'cors'
@@ -1401,6 +1342,19 @@
                 clearTimeout(timeoutId);
 
                 let claims;
+                if (!response.ok) {
+                    const empId = sessionStorage.getItem('employeeId');
+                    if (empId) {
+                        response = await fetch(`http://44.223.23.145:3407/api/claims?employee_id=${empId}`, {
+                            signal: controller.signal,
+                            headers: { 'Accept': 'application/json' },
+                            mode: 'cors'
+                        });
+                    } else {
+                        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                    }
+                }
+
                 try {
                     claims = await response.json();
                 } catch (jsonError) {
@@ -1498,7 +1452,7 @@
                     <p><strong>Description:</strong> ${claim.description}</p>
                     <p><strong>Status:</strong> ${claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}</p>
                     <p><strong>Documents:</strong></p>
-                    ${documents.map(doc => `<p><a href="http://44.223.23.145:3407/uploads/${doc.file_path}" target="_blank">${doc.file_name}</a></p>`).join('')}
+                    ${documents.map(doc => `<p><a href="${doc.file_path}" target="_blank">${doc.file_name}</a></p>`).join('')}
                 `;
 
                 document.getElementById('detailsModal').style.display = 'flex';
