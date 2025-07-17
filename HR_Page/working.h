@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,16 +38,16 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 10px;
+            padding: 20px;
         }
 
         header {
             position: relative;
             text-align: center;
             height: 140px;
-            background: linear-gradient(rgb(10, 10, 255), rgb(203, 11, 242));
+background: linear-gradient(rgb(10, 10, 255),rgb(203, 11, 242));
             color: #fff;
             border-radius: 15px;
             overflow: hidden;
@@ -120,7 +121,6 @@
             left: 40%;
             animation-duration: 25s;
         }
-
         .nav-tabs {
             display: flex;
             justify-content: center;
@@ -149,15 +149,9 @@
             color: white;
         }
 
-        .section-title-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 30px 0 20px;
-        }
-
         .section-title {
             font-size: 1.8rem;
+            margin: 30px 0 20px;
             color: var(--dark-blue);
             position: relative;
             padding-bottom: 10px;
@@ -172,33 +166,6 @@
             height: 4px;
             background: linear-gradient(90deg, var(--primary-blue), var(--purple));
             border-radius: 2px;
-        }
-
-        .filter-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .filter-label {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--dark-blue);
-        }
-
-        .filter-dropdown {
-            padding: 8px;
-            font-size: 0.95rem;
-            border-radius: 6px;
-            border: 1px solid var(--gray);
-            background-color: white;
-            color: var(--dark-blue);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .filter-dropdown:hover {
-            border-color: var(--primary-blue);
         }
 
         .section {
@@ -308,129 +275,124 @@
             color: white;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.3s ease-out;
-        }
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+}
 
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transform: translateY(0);
-            transition: all 0.3s ease;
-            position: relative;
-        }
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px; /* Reduced max-width for better single column layout */
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateY(0);
+    transition: all 0.3s ease;
+    position: relative;
+}
+.modal-content:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+}
 
-        .modal-content:hover {
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-        }
+.modal-header {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--dark-blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.modal-header i {
+    font-size: 1.5rem;
+    color: var(--dark-gray);
+    transition: all 0.2s;
+    padding: 5px;
+    border-radius: 50%;
+}
+.modal-header i:hover {
+    color: var(--red);
+    background-color: rgba(231, 76, 60, 0.1);
+    transform: rotate(90deg);
+}
+.modal-body {
+    margin-bottom: 20px;
+}
 
-        .modal-header {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--dark-blue);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
+/* Single column layout */
+.modal-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.modal-details .detail-row {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.modal-details .detail-row:last-child {
+    border-bottom: none;
+}
+.modal-details .detail-label {
+    font-weight: 600;
+    color: var(--dark-blue);
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
 
-        .modal-header i {
-            font-size: 1.5rem;
-            color: var(--dark-gray);
-            transition: all 0.2s;
-            padding: 5px;
-            border-radius: 50%;
-        }
+.modal-details p {
+    margin: 0;
+    font-size: 1rem;
+    word-break: break-word;
+    line-height: 1.5;
+    color: #555;
+}
 
-        .modal-header i:hover {
-            color: var(--red);
-            background-color: rgba(231, 76, 60, 0.1);
-            transform: rotate(90deg);
-        }
 
-        .modal-body {
-            margin-bottom: 20px;
-        }
+.modal-details a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    padding: 5px 0;
+}
 
-        .modal-details {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+.modal-details a:hover {
+    color: var(--dark-blue);
+    text-decoration: underline;
+}
+.modal-details a i {
+    font-size: 1.1rem;
+}
 
-        .modal-details .detail-row {
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
 
-        .modal-details .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .modal-details .detail-label {
-            font-weight: 600;
-            color: var(--dark-blue);
-            margin-bottom: 5px;
-            font-size: 0.95rem;
-        }
-
-        .modal-details p {
-            margin: 0;
-            font-size: 1rem;
-            word-break: break-word;
-            line-height: 1.5;
-            color: #555;
-        }
-
-        .modal-details a {
-            color: var(--primary-blue);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            padding: 5px 0;
-        }
-
-        .modal-details a:hover {
-            color: var(--dark-blue);
-            text-decoration: underline;
-        }
-
-        .modal-details a i {
-            font-size: 1.1rem;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
 
         .btn-secondary {
             background: linear-gradient(135deg, var(--dark-gray), #95a5a6);
@@ -526,13 +488,6 @@
             .modal-details .detail-label {
                 margin-top: 10px;
             }
-            .section-title-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .filter-container {
-                margin-top: 10px;
-            }
         }
 
         @keyframes fadeIn {
@@ -545,64 +500,70 @@
             40% { transform: translateY(-20px); }
             60% { transform: translateY(-10px); }
         }
+        /* Animation for modal entry */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.modal-content {
+    animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-        .modal-content {
-            animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+/* Custom scrollbar for modal */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
 
-        .modal-content::-webkit-scrollbar {
-            width: 8px;
-        }
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
 
-        .modal-content::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--primary-blue);
+    border-radius: 10px;
+}
 
-        .modal-content::-webkit-scrollbar-thumb {
-            background: var(--primary-blue);
-            border-radius: 10px;
-        }
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-blue);
+}
 
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: var(--dark-blue);
-        }
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 95%;
+        padding: 20px 15px;
+    }
+    
+    .modal-header {
+        font-size: 1.5rem;
+    }
+    
+    .modal-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .modal-actions .btn {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+    }
+}
 
-        @media (max-width: 600px) {
-            .modal-content {
-                width: 95%;
-                padding: 20px 15px;
-            }
-            .modal-header {
-                font-size: 1.5rem;
-            }
-            .modal-actions {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            .modal-actions .btn {
-                flex: 1;
-                min-width: 120px;
-                text-align: center;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="banner-background">
+                 <div class="banner-background">
                 <div class="circle"></div>
                 <div class="circle"></div>
                 <div class="circle"></div>
@@ -621,32 +582,12 @@
             <p>The claim has been updated. Review other pending claims or check completed actions.</p>
         </div>
 
-        <section id="action-required" class="section active" style="padding: 20px;">
-            <div class="section-title-container">
-                <h2 class="section-title">Pending Claims</h2>
-                <div class="filter-container">
-                    <span class="filter-label">Filters:</span>
-                    <select class="filter-dropdown" id="pendingFilter" onchange="filterClaims('action-required', this.value)">
-                        <option value="all">All Types</option>
-                        <option value="Medical">Medical</option>
-                        <option value="Travel">Travel</option>
-                        <option value="Education">Education</option>
-                        <option value="Meal">Meal</option>
-                        <option value="Equipment">Equipment</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-            </div>
+        <section id="action-required" class="section active">
+            <h2 class="section-title">Pending Claims</h2>
             <div class="claims-stats">
                 <div class="totals" id="pendingTotals">
                     <h3>Pending Claims Summary</h3>
                     <p><strong>Total Amount:</strong> ₹0</p>
-                    <p><strong>Medical:</strong> ₹0</p>
-                    <p><strong>Travel:</strong> ₹0</p>
-                    <p><strong>Education:</strong> ₹0</p>
-                    <p><strong>Meal:</strong> ₹0</p>
-                    <p><strong>Equipment:</strong> ₹0</p>
-                    <p><strong>Other:</strong> ₹0</p>
                 </div>
                 <div class="graph-container">
                     <canvas id="pendingChart"></canvas>
@@ -673,34 +614,12 @@
             </div>
         </section>
 
-        <section id="action-completed" class="section" style="padding: 20px;">
-            <div class="section-title-container">
-                <h2 class="section-title">Completed Claims</h2>
-                <div class="filter-container">
-                    <span class="filter-label">Filters:</span>
-                    <select class="filter-dropdown" id="completedFilter" onchange="filterClaims('action-completed', this.value)">
-                        <option value="all">All</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
-                        <option value="Medical">Medical</option>
-                        <option value="Travel">Travel</option>
-                        <option value="Education">Education</option>
-                        <option value="Meal">Meal</option>
-                        <option value="Equipment">Equipment</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-            </div>
+        <section id="action-completed" class="section">
+            <h2 class="section-title">Completed Claims</h2>
             <div class="claims-stats">
                 <div class="totals" id="completedTotals">
                     <h3>Completed Claims Summary</h3>
                     <p><strong>Total Amount:</strong> ₹0</p>
-                    <p><strong>Medical:</strong> ₹0</p>
-                    <p><strong>Travel:</strong> ₹0</p>
-                    <p><strong>Education:</strong> ₹0</p>
-                    <p><strong>Meal:</strong> ₹0</p>
-                    <p><strong>Equipment:</strong> ₹0</p>
-                    <p><strong>Other:</strong> ₹0</p>
                 </div>
                 <div class="graph-container">
                     <canvas id="completedChart"></canvas>
@@ -736,6 +655,11 @@
                 <div class="modal-body">
                     <div class="modal-details" id="claimDetails"></div>
                 </div>
+                <!-- <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('detailsModal')">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div> -->
             </div>
         </div>
     </div>
@@ -768,10 +692,7 @@
             document.querySelector(`.nav-tab[onclick="showSection('${sectionId}')"]`).classList.add('active');
             document.getElementById('successMessage').classList.remove('show');
             document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
-            // Reset filters when switching sections
-            document.getElementById('pendingFilter').value = 'all';
-            document.getElementById('completedFilter').value = 'all';
-            updateTables('all');
+            updateTables();
         }
 
         function closeModal(modalId) {
@@ -828,7 +749,7 @@
             return chartInstanceRef;
         }
 
-        async function updateTables(filterValue = 'all') {
+        async function updateTables() {
             try {
                 const response = await fetch('http://44.223.23.145:3407/api/claims');
                 const claims = await response.json();
@@ -843,22 +764,8 @@
                 pendingTableBody.innerHTML = '';
                 completedTableBody.innerHTML = '';
 
-                let pendingClaims = claims.filter(claim => claim.status === 'pending');
-                let completedClaims = claims.filter(claim => ['approved', 'rejected'].includes(claim.status));
-
-                // Apply filter for pending claims (type filter only)
-                if (filterValue !== 'all' && !['approved', 'rejected'].includes(filterValue)) {
-                    pendingClaims = pendingClaims.filter(claim => claim.type === filterValue || (filterValue === 'Other' && !CLAIM_TYPES.includes(claim.type)));
-                }
-
-                // Apply filter for completed claims (type or status filter)
-                if (filterValue !== 'all') {
-                    if (['approved', 'rejected'].includes(filterValue)) {
-                        completedClaims = completedClaims.filter(claim => claim.status === filterValue);
-                    } else {
-                        completedClaims = completedClaims.filter(claim => claim.type === filterValue || (filterValue === 'Other' && !CLAIM_TYPES.includes(claim.type)));
-                    }
-                }
+                const pendingClaims = claims.filter(claim => claim.status === 'pending');
+                const completedClaims = claims.filter(claim => ['approved', 'rejected'].includes(claim.status));
 
                 // Pending Claims
                 const typeTotalsPending = CLAIM_TYPES.reduce((acc, type) => {
@@ -981,10 +888,6 @@
             }
         }
 
-        function filterClaims(sectionId, filterValue) {
-            updateTables(filterValue);
-        }
-
         async function updateClaimStatus(claimId, status) {
             const action = status.charAt(0).toUpperCase() + status.slice(1);
             const confirmed = window.confirm(`Are you sure you want to ${action.toLowerCase()} claim ${claimId}?`);
@@ -1006,9 +909,7 @@
 
                 document.getElementById('successMessage').classList.add('show');
                 document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
-                const currentSection = document.querySelector('.section.active').id;
-                const filterValue = document.getElementById(currentSection === 'action-required' ? 'pendingFilter' : 'completedFilter').value;
-                await updateTables(filterValue);
+                await updateTables();
             } catch (error) {
                 console.error('Error updating claim:', error);
                 alert('Error updating claim: ' + error.message);
@@ -1031,55 +932,57 @@
                 }
 
                 const detailsDiv = document.getElementById('claimDetails');
-                detailsDiv.innerHTML = `
-                    <div class="detail-row">
-                        <p class="detail-label">Claim ID: <span style="color: black;">${claim.claim_id}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Type: <span style="color: black;">${claim.type}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Employee: 
-                            <span style="color: black;" title="${claim.employee_name}">${claim.employee_name.length > 30 ? 
-                                claim.employee_name.substring(0, 30) + '...' : claim.employee_name}</span>
-                        </p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Email: <span style="color: black;">${claim.employee_email}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Employee ID: <span style="color: black;">${claim.employee_id}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Department: <span style="color: black;">${claim.department}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Date: <span style="color: black;">${new Date(claim.claim_date).toLocaleDateString()}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Amount: <span style="color: black;">₹${Math.floor(claim.amount).toLocaleString('en-IN')}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Status: <span style="color: black;">${claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Description: <span style="color: black;">${claim.description}</span></p>
-                    </div>
-                    <div class="detail-row">
-                        <p class="detail-label">Documents:</p>
-                        <div style="margin-left: 15px; color: black;">
-                            ${documents.length > 0 ? 
-                                documents.map(doc => `
-                                    <p>
-                                        <a href="javascript:void(0)" onclick="downloadDocument('${doc.id}', '${doc.file_name}')">
-                                            <i class="fas fa-file-download"></i> ${doc.file_name}
-                                        </a>
-                                    </p>
-                                `).join('') : 
-                                '<p>No documents uploaded</p>'}
-                        </div>
-                    </div>
-                `;
+detailsDiv.innerHTML = `
+    <div class="detail-row">
+        <p class="detail-label">Claim ID: <span style="color: black;">${claim.claim_id}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Type: <span style="color: black;">${claim.type}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Employee: 
+            <span style="color: black;" title="${claim.employee_name}">${claim.employee_name.length > 30 ? 
+                claim.employee_name.substring(0, 30) + '...' : claim.employee_name}</span>
+        </p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Email: <span style="color: black;">${claim.employee_email}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Employee ID: <span style="color: black;">${claim.employee_id}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Department: <span style="color: black;">${claim.department}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Date: <span style="color: black;">${new Date(claim.claim_date).toLocaleDateString()}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Amount: <span style="color: black;">₹${Math.floor(claim.amount).toLocaleString('en-IN')}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Description: <span style="color: black;">${claim.description}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Status: <span style="color: black;">${claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}</span></p>
+    </div>
+    <div class="detail-row">
+        <p class="detail-label">Documents:</p>
+        <div style="margin-left: 15px; color: black;">
+            ${documents.length > 0 ? 
+                documents.map(doc => `
+                    <p>
+                        <a href="javascript:void(0)" onclick="downloadDocument('${doc.id}', '${doc.file_name}')">
+                            <i class="fas fa-file-download"></i> ${doc.file_name}
+                        </a>
+                    </p>
+                `).join('') : 
+                '<p>No documents uploaded</p>'}
+        </div>
+    </div>
+`;
+
+
                 document.getElementById('detailsModal').style.display = 'flex';
             } catch (error) {
                 console.error('Error viewing claim:', error);
@@ -1089,18 +992,25 @@
 
         async function downloadDocument(documentId, fileName) {
             try {
+                // First get the file path from the server
                 const response = await fetch(`http://44.223.23.145:3407/api/documents/${documentId}`);
+                
                 if (!response.ok) {
                     throw new Error('Failed to download document');
                 }
+
+                // Create a temporary anchor element to trigger the download
+                const url = `http://44.223.23.145:3407/api/documents/${documentId}`;
                 const a = document.createElement('a');
-                a.href = `http://44.223.23.145:3407/api/documents/${documentId}`;
+                a.href = url;
                 a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+                
+                // Revoke the object URL to free up memory
                 setTimeout(() => {
-                    window.URL.revokeObjectURL(a.href);
+                    window.URL.revokeObjectURL(url);
                 }, 100);
             } catch (error) {
                 console.error('Error downloading document:', error);
@@ -1110,8 +1020,9 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             showSection('action-required');
-            updateTables('all');
+            updateTables();
         });
     </script>
 </body>
 </html>
+
