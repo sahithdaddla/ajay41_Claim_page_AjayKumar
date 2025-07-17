@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,83 +43,21 @@
         }
 
         header {
-            position: relative;
-            text-align: center;
-            height: 140px;
-background: linear-gradient(rgb(10, 10, 255),rgb(203, 11, 242));
-            color: #fff;
-            border-radius: 15px;
-            overflow: hidden;
-            display: flex;
-            width: 100%;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--purple));
             color: white;
-            font-weight: 700;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 2;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        header p {
-            font-weight: 300;
-            font-size: 1.1rem;
-            margin-top: 10px;
-            opacity: 0.9;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
 
-        @keyframes moveCircles {
-            0% { transform: translateY(0) translateX(0); }
-            50% { transform: translateY(-50%) translateX(-50%); }
-            100% { transform: translateY(0) translateX(0); }
-        }
-
-        .banner-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            overflow: hidden;
-        }
-
-        .circle {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: moveCircles 15s infinite linear;
-        }
-
-        .circle:nth-child(1) {
-            top: 10%;
-            left: 20%;
-            animation-duration: 15s;
-        }
-
-        .circle:nth-child(2) {
-            top: 50%;
-            left: 70%;
-            animation-duration: 20s;
-            animation-direction: reverse;
-        }
-
-        .circle:nth-child(3) {
-            top: 80%;
-            left: 40%;
-            animation-duration: 25s;
-        }
         .nav-tabs {
             display: flex;
             justify-content: center;
@@ -275,124 +212,81 @@ background: linear-gradient(rgb(10, 10, 255),rgb(203, 11, 242));
             color: white;
         }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(5px);
-    animation: fadeIn 0.3s ease-out;
-}
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
 
-.modal-content {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    width: 90%;
-    max-width: 500px; /* Reduced max-width for better single column layout */
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transform: translateY(0);
-    transition: all 0.3s ease;
-    position: relative;
-}
-.modal-content:hover {
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-}
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease-out;
+        }
 
-.modal-header {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: var(--dark-blue);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-.modal-header i {
-    font-size: 1.5rem;
-    color: var(--dark-gray);
-    transition: all 0.2s;
-    padding: 5px;
-    border-radius: 50%;
-}
-.modal-header i:hover {
-    color: var(--red);
-    background-color: rgba(231, 76, 60, 0.1);
-    transform: rotate(90deg);
-}
-.modal-body {
-    margin-bottom: 20px;
-}
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-/* Single column layout */
-.modal-details {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.modal-details .detail-row {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-.modal-details .detail-row:last-child {
-    border-bottom: none;
-}
-.modal-details .detail-label {
-    font-weight: 600;
-    color: var(--dark-blue);
-    margin-bottom: 5px;
-    font-size: 0.95rem;
-}
+        .modal-body {
+            margin-bottom: 20px;
+        }
 
-.modal-details p {
-    margin: 0;
-    font-size: 1rem;
-    word-break: break-word;
-    line-height: 1.5;
-    color: #555;
-}
+        .modal-details {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
 
+        .modal-details p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            word-break: break-word;
+        }
 
-.modal-details a {
-    color: var(--primary-blue);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
-    padding: 5px 0;
-}
+        .modal-details .detail-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
 
-.modal-details a:hover {
-    color: var(--dark-blue);
-    text-decoration: underline;
-}
-.modal-details a i {
-    font-size: 1.1rem;
-}
+        .modal-details a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
 
+        .modal-details a:hover {
+            text-decoration: underline;
+        }
 
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    margin-top: 25px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
 
         .btn-secondary {
             background: linear-gradient(135deg, var(--dark-gray), #95a5a6);
@@ -500,74 +394,11 @@ background: linear-gradient(rgb(10, 10, 255),rgb(203, 11, 242));
             40% { transform: translateY(-20px); }
             60% { transform: translateY(-10px); }
         }
-        /* Animation for modal entry */
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-content {
-    animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Custom scrollbar for modal */
-.modal-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-    background: var(--primary-blue);
-    border-radius: 10px;
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-    background: var(--dark-blue);
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-    .modal-content {
-        width: 95%;
-        padding: 20px 15px;
-    }
-    
-    .modal-header {
-        font-size: 1.5rem;
-    }
-    
-    .modal-actions {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .modal-actions .btn {
-        flex: 1;
-        min-width: 120px;
-        text-align: center;
-    }
-}
-
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-                 <div class="banner-background">
-                <div class="circle"></div>
-                <div class="circle"></div>
-                <div class="circle"></div>
-            </div>
             <h1>HR Claims Portal</h1>
             <p>Manage employee reimbursement claims</p>
         </header>
@@ -655,11 +486,11 @@ background: linear-gradient(rgb(10, 10, 255),rgb(203, 11, 242));
                 <div class="modal-body">
                     <div class="modal-details" id="claimDetails"></div>
                 </div>
-                <!-- <div class="modal-actions">
+                <div class="modal-actions">
                     <button class="btn btn-secondary" onclick="closeModal('detailsModal')">
                         <i class="fas fa-times"></i> Close
                     </button>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
@@ -932,56 +763,63 @@ background: linear-gradient(rgb(10, 10, 255),rgb(203, 11, 242));
                 }
 
                 const detailsDiv = document.getElementById('claimDetails');
-detailsDiv.innerHTML = `
-    <div class="detail-row">
-        <p class="detail-label">Claim ID: <span style="color: black;">${claim.claim_id}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Type: <span style="color: black;">${claim.type}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Employee: 
-            <span style="color: black;" title="${claim.employee_name}">${claim.employee_name.length > 30 ? 
-                claim.employee_name.substring(0, 30) + '...' : claim.employee_name}</span>
-        </p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Email: <span style="color: black;">${claim.employee_email}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Employee ID: <span style="color: black;">${claim.employee_id}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Department: <span style="color: black;">${claim.department}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Date: <span style="color: black;">${new Date(claim.claim_date).toLocaleDateString()}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Amount: <span style="color: black;">₹${Math.floor(claim.amount).toLocaleString('en-IN')}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Description: <span style="color: black;">${claim.description}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Status: <span style="color: black;">${claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}</span></p>
-    </div>
-    <div class="detail-row">
-        <p class="detail-label">Documents:</p>
-        <div style="margin-left: 15px; color: black;">
-            ${documents.length > 0 ? 
-                documents.map(doc => `
-                    <p>
-                        <a href="javascript:void(0)" onclick="downloadDocument('${doc.id}', '${doc.file_name}')">
-                            <i class="fas fa-file-download"></i> ${doc.file_name}
-                        </a>
-                    </p>
-                `).join('') : 
-                '<p>No documents uploaded</p>'}
-        </div>
-    </div>
-`;
-
+                detailsDiv.innerHTML = `
+                    <div class="detail-row">
+                        <p class="detail-label">Claim ID:</p>
+                        <p>${claim.claim_id}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Type:</p>
+                        <p>${claim.type}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Employee:</p>
+                        <p title="${claim.employee_name}">${claim.employee_name.length > 30 ? 
+                            claim.employee_name.substring(0, 30) + '...' : claim.employee_name}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Email:</p>
+                        <p>${claim.employee_email}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Employee ID:</p>
+                        <p>${claim.employee_id}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Department:</p>
+                        <p>${claim.department}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Date:</p>
+                        <p>${new Date(claim.claim_date).toLocaleDateString()}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Amount:</p>
+                        <p>₹${Math.floor(claim.amount).toLocaleString('en-IN')}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Description:</p>
+                        <p>${claim.description}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Status:</p>
+                        <p>${claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}</p>
+                    </div>
+                    <div class="detail-row">
+                        <p class="detail-label">Documents:</p>
+                        <div>
+                            ${documents.length > 0 ? 
+                                documents.map(doc => `
+                                    <p>
+                                        <a href="javascript:void(0)" onclick="downloadDocument('${doc.id}', '${doc.file_name}')">
+                                            <i class="fas fa-file-download"></i> ${doc.file_name}
+                                        </a>
+                                    </p>
+                                `).join('') : 
+                                '<p>No documents uploaded</p>'}
+                        </div>
+                    </div>
+                `;
 
                 document.getElementById('detailsModal').style.display = 'flex';
             } catch (error) {
@@ -1025,4 +863,3 @@ detailsDiv.innerHTML = `
     </script>
 </body>
 </html>
-
